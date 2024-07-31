@@ -1,0 +1,5 @@
+C:\Users\pedro_silva\Desktop\Codes\ManitoringFolders\publish\ManitoringFolders.exe
+C:\Users\pedro_silva\Desktop\Codes\ManitoringFolders\publish\ManitoringFolders.dll
+C:\Users\pedro_silva\Desktop\Codes\ManitoringFolders\publish\ManitoringFolders.deps.json
+C:\Users\pedro_silva\Desktop\Codes\ManitoringFolders\publish\ManitoringFolders.runtimeconfig.json
+C:\Users\pedro_silva\Desktop\Codes\ManitoringFolders\publish\ManitoringFolders.pdb
