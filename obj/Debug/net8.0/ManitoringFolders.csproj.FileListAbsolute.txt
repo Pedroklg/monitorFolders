@@ -1,0 +1,14 @@
+C:\Users\pedro_silva\Desktop\Codes\ManitoringFolders\bin\Debug\net8.0\ManitoringFolders.exe
+C:\Users\pedro_silva\Desktop\Codes\ManitoringFolders\bin\Debug\net8.0\ManitoringFolders.deps.json
+C:\Users\pedro_silva\Desktop\Codes\ManitoringFolders\bin\Debug\net8.0\ManitoringFolders.runtimeconfig.json
+C:\Users\pedro_silva\Desktop\Codes\ManitoringFolders\bin\Debug\net8.0\ManitoringFolders.dll
+C:\Users\pedro_silva\Desktop\Codes\ManitoringFolders\bin\Debug\net8.0\ManitoringFolders.pdb
+C:\Users\pedro_silva\Desktop\Codes\ManitoringFolders\obj\Debug\net8.0\ManitoringFolders.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\pedro_silva\Desktop\Codes\ManitoringFolders\obj\Debug\net8.0\ManitoringFolders.AssemblyInfoInputs.cache
+C:\Users\pedro_silva\Desktop\Codes\ManitoringFolders\obj\Debug\net8.0\ManitoringFolders.AssemblyInfo.cs
+C:\Users\pedro_silva\Desktop\Codes\ManitoringFolders\obj\Debug\net8.0\ManitoringFolders.csproj.CoreCompileInputs.cache
+C:\Users\pedro_silva\Desktop\Codes\ManitoringFolders\obj\Debug\net8.0\ManitoringFolders.dll
+C:\Users\pedro_silva\Desktop\Codes\ManitoringFolders\obj\Debug\net8.0\refint\ManitoringFolders.dll
+C:\Users\pedro_silva\Desktop\Codes\ManitoringFolders\obj\Debug\net8.0\ManitoringFolders.pdb
+C:\Users\pedro_silva\Desktop\Codes\ManitoringFolders\obj\Debug\net8.0\ManitoringFolders.genruntimeconfig.cache
+C:\Users\pedro_silva\Desktop\Codes\ManitoringFolders\obj\Debug\net8.0\ref\ManitoringFolders.dll
