@@ -9,47 +9,69 @@ namespace FileSystemMonitor
     class Program
     {
         static Dictionary<string, FileSystemWatcher> watchers = new Dictionary<string, FileSystemWatcher>();
-        static string baseLogPath = @"C:\Users\pedro_silva\Desktop\LogsPastaP"; // Path for the log file
-        static Dictionary<string, List<LogEntry>> directoryLogs = new Dictionary<string, List<LogEntry>>();
+        static string? logFilePath;
+        static List<LogEntry> allLogEntries = new List<LogEntry>();
         static System.Timers.Timer? saveTimer;
         static object lockObj = new object();
 
         static void Main(string[] args)
         {
-            // List of directories to monitor
-            List<string> directoriesToMonitor = new List<string>
+            if (args.Length < 2)
             {
-                @"\\mm-dfs\CDAM"
-                // Add more directories as needed
-            };
+                Console.WriteLine("Usage: FileSystemMonitor.exe <directory1> <directory2> ... <logFilePath>");
+                return;
+            }
+
+            logFilePath = args[^1]; // Last argument is the log file path
+            var directoriesToMonitor = new List<string>(args[..^1]); // All arguments except the last one
 
             // Ensure base log directory exists
-            Directory.CreateDirectory(baseLogPath);
+            string baseLogPath = Path.GetDirectoryName(logFilePath) ?? string.Empty;
+
+            try
+            {
+                Directory.CreateDirectory(baseLogPath);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Console.WriteLine($"Access to the path '{baseLogPath}' is denied. {ex.Message}");
+                return;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while creating the log directory: {ex.Message}");
+                return;
+            }
 
             // Initialize FileSystemWatchers for each directory
             foreach (var dir in directoriesToMonitor)
             {
-                var watcher = new FileSystemWatcher
+                try
                 {
-                    Path = dir,
-                    IncludeSubdirectories = true,
-                    EnableRaisingEvents = true,
-                    InternalBufferSize = 65536 // 64KB
-                };
+                    var watcher = new FileSystemWatcher
+                    {
+                        Path = dir,
+                        IncludeSubdirectories = true,
+                        EnableRaisingEvents = true,
+                        InternalBufferSize = 65536 // 64KB
+                    };
 
-                watcher.Created += (sender, e) => OnChanged(sender, e, dir);
-                watcher.Changed += (sender, e) => OnChanged(sender, e, dir);
-                watcher.Deleted += (sender, e) => OnChanged(sender, e, dir);
-                watcher.Renamed += (sender, e) => OnRenamed(sender, e, dir);
+                    watcher.Created += (sender, e) => OnChanged(sender, e, dir);
+                    watcher.Changed += (sender, e) => OnChanged(sender, e, dir);
+                    watcher.Deleted += (sender, e) => OnChanged(sender, e, dir);
+                    watcher.Renamed += (sender, e) => OnRenamed(sender, e, dir);
 
-                watchers[dir] = watcher;
-                directoryLogs[dir] = new List<LogEntry>();
-
-                Console.WriteLine($"Monitoring changes in {dir}");
+                    watchers[dir] = watcher;
+                    Console.WriteLine($"Monitoring changes in {dir}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"An error occurred while initializing watcher for directory '{dir}': {ex.Message}");
+                }
             }
 
             // Initialize and start the timer to save logs every minute
-            saveTimer = new System.Timers.Timer(60000); //  1 minute
+            saveTimer = new System.Timers.Timer(60000); // 60,000 milliseconds = 1 minute
             saveTimer.Elapsed += (sender, e) => SaveLogEntries();
             saveTimer.AutoReset = true;
             saveTimer.Enabled = true;
@@ -71,15 +93,15 @@ namespace FileSystemMonitor
 
         private static void OnChanged(object sender, FileSystemEventArgs e, string directory)
         {
-            LogEvent(e.ChangeType.ToString(), e.FullPath, null, directory);
+            LogEvent(e.ChangeType.ToString(), e.FullPath, null);
         }
 
         private static void OnRenamed(object sender, RenamedEventArgs e, string directory)
         {
-            LogEvent("Renamed", e.FullPath, e.OldFullPath, directory);
+            LogEvent("Renamed", e.FullPath, e.OldFullPath);
         }
 
-        private static void LogEvent(string changeType, string fullPath, string? oldFullPath, string directory)
+        private static void LogEvent(string changeType, string fullPath, string? oldFullPath)
         {
             var logEntry = new LogEntry
             {
@@ -91,11 +113,7 @@ namespace FileSystemMonitor
 
             lock (lockObj)
             {
-                if (!directoryLogs.ContainsKey(directory))
-                {
-                    directoryLogs[directory] = new List<LogEntry>();
-                }
-                directoryLogs[directory].Add(logEntry);
+                allLogEntries.Add(logEntry);
             }
         }
 
@@ -103,29 +121,25 @@ namespace FileSystemMonitor
         {
             lock (lockObj)
             {
-                foreach (var dir in directoryLogs.Keys)
+                if (allLogEntries.Count > 0)
                 {
-                    var logEntries = directoryLogs[dir];
-                    if (logEntries.Count > 0)
+                    string json = JsonSerializer.Serialize(allLogEntries, new JsonSerializerOptions { WriteIndented = true });
+
+                    try
                     {
-                        string logDir = Path.Combine(baseLogPath, Path.GetFileName(dir));
-                        Directory.CreateDirectory(logDir);
-
-                        string logFilePath = Path.Combine(logDir, "events.json");
-
-                        List<LogEntry> existingLogEntries = new List<LogEntry>();
-                        if (File.Exists(logFilePath))
-                        {
-                            string existingJson = File.ReadAllText(logFilePath);
-                            existingLogEntries = JsonSerializer.Deserialize<List<LogEntry>>(existingJson) ?? new List<LogEntry>();
-                        }
-
-                        existingLogEntries.AddRange(logEntries);
-
-                        string json = JsonSerializer.Serialize(existingLogEntries, new JsonSerializerOptions { WriteIndented = true });
                         File.WriteAllText(logFilePath, json);
-                        directoryLogs[dir].Clear(); // Clear entries after saving
+                        Console.WriteLine($"Log entries saved to {logFilePath}");
                     }
+                    catch (UnauthorizedAccessException ex)
+                    {
+                        Console.WriteLine($"Access to the path '{logFilePath}' is denied. {ex.Message}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"An error occurred while saving the log entries: {ex.Message}");
+                    }
+
+                    allLogEntries.Clear(); // Clear entries after saving
                 }
             }
         }
@@ -133,9 +147,9 @@ namespace FileSystemMonitor
 
     public class LogEntry
     {
-        public required string Timestamp { get; set; }
-        public required string ChangeType { get; set; }
-        public required string FullPath { get; set; }
+        public string Timestamp { get; set; } = string.Empty;
+        public string ChangeType { get; set; } = string.Empty;
+        public string FullPath { get; set; } = string.Empty;
         public string? OldFullPath { get; set; }
     }
 }
