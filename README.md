@@ -1,4 +1,4 @@
-Como Utilizar
+# Como Utilizar
 Baixe o Executável
 
 Acesse o repositório MonitorFolders e navegue até o diretório MonitorarPasta. Baixe o arquivo executável self-contained disponível lá.
@@ -28,3 +28,5 @@ FileSystemMonitor.exe "C:\Pasta1" "C:\Pasta2" "C:\Logs\log.json"
 Parar a Monitoria
 
 Para parar a monitoria, pressione Enter no terminal onde o programa está em execução. O programa salvará os logs restantes e encerrará.
+
+Se quiser mover as diferenças para um outro diretório, acesse https://github.com/Pedroklg/MigrateChanges
