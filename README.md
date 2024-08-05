@@ -11,8 +11,6 @@ Comando de Execução
 
 Execute o programa com o seguinte comando:
 
-bash
-Copiar código
 FileSystemMonitor.exe <diretório1> <diretório2> ... <caminhoDoArquivoDeLog>
 Onde:
 
@@ -22,8 +20,6 @@ Exemplo:
 
 Para monitorar as pastas C:\Pasta1 e C:\Pasta2 e gravar o log em C:\Logs\log.json, use:
 
-bash
-Copiar código
 FileSystemMonitor.exe "C:\Pasta1" "C:\Pasta2" "C:\Logs\log.json"
 Parar a Monitoria
 
