@@ -1,7 +1,7 @@
 # Como Utilizar
 Baixe o Executável
 
-Acesse o repositório MonitorFolders e navegue até o diretório MonitorarPasta. Baixe o arquivo executável self-contained disponível lá.
+Acesse o repositório MonitorFolders e navegue até o diretório MonitorarPasta. Baixe o diretorio MonitorarPasta com o executável self-contained disponível lá.
 
 Execute o Programa
 
